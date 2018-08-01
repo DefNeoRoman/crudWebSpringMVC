@@ -9,6 +9,16 @@ public class User {
 
     }
 
+    public User(int age, String name, String email) {
+
+        this.age = age;
+        this.name = name;
+        this.email = email;
+        this.role = "USER";
+        this.password = "user";
+        this.createdDate = new Timestamp(System.currentTimeMillis());
+    }
+
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
@@ -91,7 +101,9 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    public boolean isNew() {
+        return id == 0;
+    }
     @Override
     public String toString() {
         return "User{" +

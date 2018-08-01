@@ -1,10 +1,7 @@
 package app.db;
 
 import app.model.User;
-
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.springframework.util.StringUtils;
-
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

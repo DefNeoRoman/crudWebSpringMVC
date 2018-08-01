@@ -4,6 +4,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="fragments/header.jsp"/>
 <div class="container">
+    <form method="get" action="user/create">
+            <input class="btn btn-primary" type="submit" value="Add">
+    </form>
     <table id="userDataTable" class="display" cellspacing="0" width="100%">
         <thead>
         <tr>
@@ -29,22 +32,12 @@
                 <td name="createdDate"><c:out value="${user.createdDate}"/></td>
                 <td name="role"><c:out value="${user.role}"/></td>
                 <td name="id">
-                    <form method="get" action="user/edit">
-                        <input type="hidden" name="userId" value="${user.id}">
-                        <input type="hidden" name="currentPage" value="${currentPage}">
-                        <input type="hidden" name="limit" value="${limit}">
-                        <input class="btn btn-primary" type="submit" value="Edit">
-                    </form>
+                    <a class ="btn btn-primary" href="user/edit?id=${user.id}">Edit</a>
                 </td>
                 <td name="id">
-                    <form method="post" action="user/delete?userId=${user.id}">
-                        <input type="hidden" name="currentPage" value="${currentPage}">
-                        <input type="hidden" name="limit" value="${limit}">
-                        <input class="btn btn-primary" type="submit" value="Delete">
-                    </form>
+                    <a class ="btn btn-primary" href="user/delete?id=${user.id}">Delete</a>
                 </td>
             </tr>
-
         </c:forEach>
         </tbody>
 
