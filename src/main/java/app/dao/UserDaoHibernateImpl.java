@@ -1,81 +1,80 @@
 package app.dao;
 
-import app.db.HibernateConfig;
 import app.model.User;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
+
 import java.util.List;
+
 @Repository
 public class UserDaoHibernateImpl implements UserDao {
-    private EntityManager em;
 
-    public UserDaoHibernateImpl() {
-        em = HibernateConfig.getEm();
+    private final SessionFactory sessionFactory;
+
+    @Autowired
+    public UserDaoHibernateImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
+
     @Override
+
     public void addUser(User user) {
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        em.persist(user);
-        transaction.commit();
+        sessionFactory.getCurrentSession().save(user);
+
+
     }
 
     @Override
     public User getUserByName(String name) {
-        User result = new User();
-        result.setPassword("noPassword");
-        try {
-            TypedQuery<User> tq = em.createQuery("from User u WHERE u.name= :nam ", User.class);
-            result = tq.setParameter("nam", name).getSingleResult();
-        } catch(NoResultException | NonUniqueResultException noresult) {
-
-        }
-        return result;
+        Query query= sessionFactory.getCurrentSession().
+                createQuery("from User where name=:name");
+        query.setParameter("name", name);
+        return (User) query.uniqueResult();
     }
 
     @Override
     public void updateUser(User user) {
-        User user1 = em.find(User.class, user.getId());
-        em.getTransaction().begin();
+        User user1 = sessionFactory.getCurrentSession().get(User.class, user.getId());
         user1.setName(user.getName());
         user1.setEmail(user.getEmail());
         user1.setCreatedDate(user.getCreatedDate());
         user1.setAge(user.getAge());
-        em.persist(user1);
-        em.getTransaction().commit();
+        sessionFactory.getCurrentSession().save(user1);
     }
 
     @Override
     public void deleteUser(long userId) {
-        User user = em.find(User.class, Long.valueOf(userId));
-        em.getTransaction().begin();
-        em.remove(user);
-        em.getTransaction().commit();
+        Session session = sessionFactory.getCurrentSession();
+        User user = session.byId(User.class).load(userId);
+        session.delete(user);
 
     }
 
     @Override
     public List<User> getAllUsers(int offSet, int limit) {
-        Query query = em.createQuery("from User ");
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("from User ");
         query.setFirstResult(offSet);
         query.setMaxResults(limit);
-        List<User> resultList = (List<User>)query.getResultList();
-        return resultList;
+        return (List<User>) query.list();
     }
 
     @Override
     public User getUserById(long userId) {
-
-        return em.find(User.class,userId);
+        return sessionFactory.getCurrentSession().get(User.class, userId);
     }
 
     @Override
     public List<User> getLastUsers(int limit) {
-        Query queryTotal = em.createQuery
+        Session session = sessionFactory.getCurrentSession();
+        Query queryTotal = session.createQuery
                 ("Select count(f.id) from User f");
-        int countResult = (int) (long)queryTotal.getSingleResult();
-        return getAllUsers(countResult-limit,limit);
+        int countResult = (int) (long) queryTotal.getFirstResult();
+        return getAllUsers(countResult - limit, limit);
     }
 }
