@@ -11,5 +11,6 @@
         <input type="password" class="form-control" name="j_password" placeholder="Password" required value=" ">
         <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
     </form>
+    <a class="btn btn-lg btn-primary btn-block" href="/register">регистрация</a>
 </div>
 <jsp:include page="fragments/footer.jsp"/>
