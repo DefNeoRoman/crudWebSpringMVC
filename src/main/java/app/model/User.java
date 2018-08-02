@@ -1,10 +1,16 @@
 package app.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.HashSet;
+
 @Entity
 @Table(name = "users")
-public class User{
+public class User implements UserDetails {
     public User() {
 
     }
@@ -41,6 +47,9 @@ public class User{
 
     @Column(name="password", length=2000)
     private String password;
+
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = true;
 
     public User(String name) {
         this.name = name;
@@ -94,8 +103,47 @@ public class User{
         this.role = role;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        HashSet<Role> grantedAuthorities = new HashSet<>();
+        Role role = new Role(name);
+        grantedAuthorities.add(role);
+        return grantedAuthorities;
+    }
+    @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setPassword(String password) {

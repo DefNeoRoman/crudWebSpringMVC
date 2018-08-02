@@ -1,5 +1,6 @@
 package app.config;
 
+import app.db.PopulateDB;
 import app.model.User;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class AppConfig {
         factoryBean.setDataSource(getDataSource());
         Properties props = new Properties();
         props.put("hibernate.show_sql", "true");
-        props.put("hibernate.hbm2ddl.auto", "update");
+        props.put("hibernate.hbm2ddl.auto", "create-drop");
         factoryBean.setHibernateProperties(props);
         factoryBean.setPackagesToScan("app.model");
         factoryBean.setAnnotatedClasses(User.class);
@@ -52,5 +53,8 @@ public class AppConfig {
         dataSource.setPassword(env.getProperty("password"));
         return dataSource;
     }
-
+    @Bean(initMethod = "init")
+    public PopulateDB initTestData() {
+        return new PopulateDB();
+    }
 }
