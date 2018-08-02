@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 @Entity
 @Table(name = "users")
-public class User {
+public class User{
     public User() {
 
     }
@@ -14,7 +14,7 @@ public class User {
         this.age = age;
         this.name = name;
         this.email = email;
-        this.role = "USER";
+        this.role = "ROLE_USER";
         this.password = "user";
         this.createdDate = new Timestamp(System.currentTimeMillis());
     }

@@ -17,9 +17,12 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
 
+    private final AuthSuccessHandler customizeAuthenticationSuccessHandler;
+
     @Autowired
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthSuccessHandler customizeAuthenticationSuccessHandler) {
         this.userDetailsService = userDetailsService;
+        this.customizeAuthenticationSuccessHandler = customizeAuthenticationSuccessHandler;
     }
 
     @Autowired
@@ -33,18 +36,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/resources/**", "/**").permitAll()
-                .anyRequest().permitAll()
-                .and();
+                .antMatchers("/resources/**", "/webjars/**").permitAll()
+                .antMatchers("/user/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/userTask").access("hasRole('ROLE_USER')")
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedPage("/jsp/accessDenied.jsp");
 
-        http.formLogin()
+
+        http.formLogin().successHandler(customizeAuthenticationSuccessHandler)
                 .loginPage("/login")
                 .loginProcessingUrl("/j_spring_security_check")
                 .failureUrl("/login?error")
                 .usernameParameter("j_username")
                 .passwordParameter("j_password")
                 .permitAll();
-
         http.logout()
                 .permitAll()
                 .logoutUrl("/logout")

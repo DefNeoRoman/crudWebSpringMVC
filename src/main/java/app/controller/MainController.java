@@ -21,15 +21,15 @@ public class MainController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView main() {
-        ModelAndView modelAndView = new ModelAndView("index");
+        ModelAndView modelAndView = new ModelAndView("login");
         modelAndView.addObject("users", userService.getAllUsers(0, 10));
         return modelAndView;
     }
 
     @RequestMapping(value = "/user")
     public ModelAndView checkUser() {
-        ModelAndView modelAndView = new ModelAndView("welcome");
-        modelAndView.addObject("user", "вася");
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addObject("users", userService.getAllUsers(0, 10));
         return modelAndView;
     }
 
@@ -49,7 +49,7 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:/";
+        return "redirect:/user";
     }
 
     @RequestMapping(value = "/user/edit", method = RequestMethod.GET)
@@ -72,11 +72,16 @@ public class MainController {
         userById.setEmail(email);
         userById.setAge(age);
         userService.updateUser(userById);
-        return "redirect:/";
+        return "redirect:/user";
     }
     @RequestMapping(value = "/user/delete", method = RequestMethod.GET)
     public String userDelete(@RequestParam Long id){
         userService.deleteUser(id);
-        return "redirect:/";
+        return "redirect:/user";
+    }
+    @RequestMapping(value = "/userTask", method = RequestMethod.GET)
+    public String userTask(){
+
+        return "userTask";
     }
 }
